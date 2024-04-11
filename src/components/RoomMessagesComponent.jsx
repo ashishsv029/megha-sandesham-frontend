@@ -1,16 +1,21 @@
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
 import { IoCheckmarkOutline } from "react-icons/io5";
-const RoomMessagesComponent = ({ roomMessages = [{
-    text: 'Hi Anna, how are you',
-    isSenderMessage: true,
-    time: '26 July 10:40',
-    status: 'delivered'
-}, {
-    text: 'Hi broo, wassup...',
-    isSenderMessage: false,
-    time: '26 July 10:45',
-    status: 'sent'
-}] }) => {
+import { useState, useRef, useEffect } from 'react';
+
+const RoomMessagesComponent = ({ roomMessages = []}) => {
+    const scrollRef = useRef(null);
+
+    useEffect(() => {
+        //Scroll to the bottom of the scrollable element when component mounts
+        if (scrollRef.current) {
+            scrollRef.current.scrollTo({
+              top: 50000000000, //given a max value whihc will be more than growable height of container
+              behavior: 'smooth'
+            });
+          }
+        
+      }, [roomMessages]);
+    
     const receiverMessageStyle = {
         listStyle: 'none',
         padding: '12px 12px',
@@ -39,22 +44,21 @@ const RoomMessagesComponent = ({ roomMessages = [{
 
     }
     return (
-        <div style={{ flexGrow: 0, height: '90%', backgroundColor: '#efe9e0', margin: '10px', marginBottom: '0px', border: '0.5px solid #7a7a7a', borderRadius: '20px 20px 0px 0px' }}>
-            <ul class="message-container" id="message-container" style={
+        <div ref={scrollRef}  style={{ flexGrow: 0, height: '90%', backgroundColor: '#efe9e0', margin: '10px', marginBottom: '0px', border: '0.5px solid #7a7a7a', borderRadius: '20px 20px 0px 0px',overflowY: 'scroll',
+        overflowX: 'hidden' }}>
+            <ul className="message-container" id="message-container" style={
                 {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    overflowY: 'scroll',
-                    overflowX: 'hidden',
-                    height: '100%',
+                    height: '100%'
                     
                 }}>
                 {roomMessages.map((message, index) => (
                     <li
                         key={index}
                         style={
-                            message.isSenderMessage
+                            message.isUserMessage
                                 ? senderMessageStyle
                                 : receiverMessageStyle
                         }
@@ -66,7 +70,7 @@ const RoomMessagesComponent = ({ roomMessages = [{
                                 fontSize: '12px',
                                 marginTop: '8px',
                                 textAlign: 'right'
-                            }}>{message.time}
+                            }}>{message.created_at}
                             <span style={{marginLeft: '10px'}}>{message.status == 'delivered' ? <IoCheckmarkDoneOutline size={20}/> : <IoCheckmarkOutline size={20}/>}</span>
                             </span>
                     </li>

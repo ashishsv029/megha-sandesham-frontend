@@ -1,14 +1,10 @@
-const ChatRoomsComponent = ({ rooms = [{
-    photo: 'ntr.png',
-    name: "NTR Jr"
-}, {
-    photo: 'ntr.png',
-    name: "NTR Jr"
-}], onRoomClick, userInfo }) => {
+import { useState } from "react";
+
+const ChatRoomsComponent = ({ roomsInfo = [], onRoomClick, userInfo }) => {
     
     return (
-        <div style={{ flexGrow: 0, height: '90%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: 'white', border: '0.5px solid #7a7a7a', borderRadius: '20px' , padding: '1rem', margin: '10px', marginBottom: '0px'}}>
-            {rooms.map((room, index) => (
+        <div style={{ flexGrow: 0, height: '90%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: 'white', border: '0.5px solid #7a7a7a', borderRadius: '20px' , padding: '1rem', margin: '10px', marginBottom: '0px', overflowY: 'scroll', overflowX: 'hidden'}}>
+            {roomsInfo.map((room, index) => (
                 <div
                     key={index}
                     style={{

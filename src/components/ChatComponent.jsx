@@ -3,7 +3,7 @@ import RoomMessagesComponent from "./RoomMessagesComponent";
 import RoomProfileComponent from "./RoomProfileComponent";
 import SendMessageComponent from "./SendMessageComponent";
 import BrandComponent from "./BrandComponent";
-let ChatComponent = ({isUserSelectedAnyRoom, roomInfo}) => {
+let ChatComponent = ({isUserSelectedAnyRoom, roomInfo, userSocket, selectedRoomMessages}) => {
    
     return (
         <>
@@ -11,8 +11,8 @@ let ChatComponent = ({isUserSelectedAnyRoom, roomInfo}) => {
                 isUserSelectedAnyRoom ? 
                 <> 
                     <RoomProfileComponent RoomName={roomInfo.name}/>
-                    <RoomMessagesComponent />
-                    <SendMessageComponent />
+                    <RoomMessagesComponent roomMessages={selectedRoomMessages} />
+                    <SendMessageComponent userSocket={userSocket} roomInfo={roomInfo}/>
                 </> :
                 <div style={{ height: '100%', backgroundColor: 'black', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}> 
                     <BrandComponent />

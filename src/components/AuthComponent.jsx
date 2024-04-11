@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 
 
-const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext }) => {
+const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRoomIntoAssociatedRooms, addNewMessageIntoCurrentRoom }) => {
     const [signInUsername, setSignInUsername] = useState('');
     const [signInPassword, setSignInPassword] = useState('');
     const [signUpUsername, setSignUpUsername] = useState('');
@@ -27,17 +27,18 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext }) => {
         });
         socket.on('response', (response) => {
             console.log("response from server- =", response);
-            if(response.response_type == 'associatedRoomsOfUserInfo') {
-                setUserInfoOnAppContext(response);
+            if(response.response_type == 'associatedRoomsOfUserInfo') { //this will happen only after connect event
+                setUserInfoOnAppContext(response, socket);
                 navigate('/chat');
-
             }
         });
         socket.on('chat-message', (message) => {
+            addNewMessageIntoCurrentRoom(message);
             console.log("chat-message = ", message);
         });
-        socket.on('room-joined', (value) => {
-            console.log("room-joined - ", value)
+        socket.on('room-joined', (roomInfo) => {
+            console.log("room-joined - ", roomInfo);
+            addNewRoomIntoAssociatedRooms(roomInfo);
         })
     
         socket.on('socket-pool-size-changed', (value) => {

@@ -1,13 +1,13 @@
 import ChatRoomsComponent from './ChatRoomsComponent';
 import NewChatComponent from './NewChatComponent';
 import UserProfileComponent from './UserProfileComponent';
-let ChatHistoryComponent = ({loggedInUserInfo = {}, onRoomClick}) => {
+let ChatHistoryComponent = ({loggedInUserInfo = {}, onRoomClick, associatedRooms = []}) => {
   
   return (
    
     <>
       <UserProfileComponent userName={loggedInUserInfo.name}/>
-      <ChatRoomsComponent userInfo={loggedInUserInfo} rooms={loggedInUserInfo.associatedRooms} onRoomClick={onRoomClick}/>
+      <ChatRoomsComponent userInfo={loggedInUserInfo} roomsInfo={associatedRooms} onRoomClick={onRoomClick}/>
       <NewChatComponent/>
 
       
