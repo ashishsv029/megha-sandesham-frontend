@@ -10,6 +10,7 @@ const BaseComponent = ({ leftChildComponent, rightChildComponent, leftChildStyle
       width: '90%',
       height: '90vh', // 80% of the viewport height
       backgroundColor: 'red',
+      border: '2px solid black',
       display: 'flex',
       flexDirection: 'row', // stack child elements side by side
       justifyContent: 'flex-start', // so the child elements will be row wise kept from start of flex box (i.e from left)

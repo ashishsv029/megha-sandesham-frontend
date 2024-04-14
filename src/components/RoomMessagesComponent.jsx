@@ -63,6 +63,8 @@ const RoomMessagesComponent = ({ roomMessages = []}) => {
                                 : receiverMessageStyle
                         }
                     >
+                       <span style={{
+                                display: 'block', fontSize: '1.2rem', fontFamily: "Pacifico, cursive", color: message.isUserMessage?'blue':'green',marginBottom: '4px'}}>{message.fromUser.name}</span> 
                             {message.text}
                             <span style={{
                                 display: 'block',
