@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CustomSocket } from '../Socket';
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +17,44 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
     const [isSignIn, setIsSignIn] = useState(true);
     const [isSignUp, setIsSignUp] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const validateUser = async () => {
+            try {
+                console.log("Checking Cookie Validity...");
+                const response = await fetch('http://localhost:3200/user/validate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        jwt: "",
+                    }),
+                    credentials: 'include', // Include httpOnly cookies in the request
+                });
+    
+                if (!response.ok) {
+                    console.log("Something went wrong while validating existing cookie");
+                    modifyLoggedInStatus(false); // Set isLoggedIn to false if response is not OK
+                    return;
+                }
+                let validationClaims = await response.json();
+                modifyLoggedInStatus(true);
+                const headers = {
+                    'Authorization': validationClaims.jwt
+                }
+                const socket = CustomSocket(headers).connect();
+                await listenSocketEvents(socket);
+                //navigate('/chat'); // can be used from component only within react router.. so could not use this in app.js
+            } catch (err) {
+                console.log('Refresh Login Error: ', err);
+                modifyLoggedInStatus(false); // Set isLoggedIn to false in case of error
+            }
+        };
+    
+        validateUser(); // Call the async function
+    
+    }, []); // Empty dependency array ensures the effect runs only once
 
     const listenSocketEvents = async (socket) => {
         socket.on('connect', () => {
@@ -81,26 +119,37 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
         let responseData = {};
         //fetch the user details from backend server. TODO:- later Replace this with validation API which validates the creds and returns a JWT
         try {
-            const response = await fetch(`http://localhost:3100/user?name=${signInUsername}&email=${signInPassword}`);
+            const response = await fetch('http://localhost:3200/user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: signInUsername,
+                    password: signInPassword,
+                }),
+                credentials: 'include' //needed to make browser set any response headers having set-cookie header 
+            });
             if (!response.ok) {
                 toast.error('Bad Response ' + JSON.stringify({ message: response.statusText, statusCode: response.status }), { position: 'top-left' });
                 throw new Error({ message: response.statusText, statusCode: response.status });
             }
             responseData = await response.json();
-            if (responseData == null) {
+            if (responseData == null || !responseData.jwt) {
                 throw 'Invalid Credentials - User Not Found'
             }
+            // const headers = {
+            //     'x-ms-user-info': JSON.stringify({
+            //         id: responseData.id,
+            //         name: responseData.name
+            //     })
+            // } -> server gateway will create this header when jwt is sent
             const headers = {
-                'x-ms-user-info': JSON.stringify({
-                    id: responseData.id,
-                    name: responseData.name
-                })
-
+                'Authorization': responseData.jwt
             }
             const socket = CustomSocket(headers).connect();
             await listenSocketEvents(socket);
             // // Handle connection events
-
             setSignInUsername('');
             setSignInPassword('');
             modifyLoggedInStatus(true);
@@ -124,15 +173,15 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
                         <h1 style={{fontFamily: "Pacifico, cursive"}}>Sign In</h1>
                         <form onSubmit={handleSignInSubmit}>
                             <input
-                                type="text"
-                                placeholder="Username"
+                                type="email"
+                                placeholder="Email"
                                 value={signInUsername}
                                 onChange={(e) => setSignInUsername(e.target.value)}
                                 style={{ marginBottom: '10px', padding: '10px', width: '18rem', height: '2rem', fontSize: '1.2rem' }} // 1 rem = 16px
                             />
                             <br />
                             <input
-                                type="email"
+                                type="password"
                                 placeholder="Password (mailId)"
                                 value={signInPassword}
                                 onChange={(e) => setSignInPassword(e.target.value)}

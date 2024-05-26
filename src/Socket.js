@@ -4,6 +4,7 @@ const URL = 'ws://localhost:3100'
 
 export const CustomSocket = (headers) => {
     return io(URL, {
+        //transports: ['websocket', 'polling'],
         autoConnect: false,
         extraHeaders: headers || {}
       });
