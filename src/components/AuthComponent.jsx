@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CustomSocket } from '../Socket';
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -14,8 +14,15 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
     const [signInPassword, setSignInPassword] = useState('');
     const [signUpUsername, setSignUpUsername] = useState('');
     const [signUpPassword, setSignUpPassword] = useState('');
+    const [signUpEmail, setSignUpEmail] = useState('');
     const [isSignIn, setIsSignIn] = useState(true);
     const [isSignUp, setIsSignUp] = useState(false);
+    const [selectedFileName, setSelectedFileName] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+
+    const [preview, setPreview] = useState(null);
+    const [base64Image, setBase64Image] = useState(null);
+    const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -88,16 +95,29 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
     const handleSignUpSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await fetch('http://localhost:3100/user', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: signUpUsername,
-                    email: signUpPassword,
-                }),
+            const formData = new FormData();
+            formData.append('name', signUpUsername);
+            formData.append('email', signUpEmail);
+            formData.append('password', signUpPassword);
+            formData.append('profile_pic', selectedFile);
+            const response = await fetch('http://localhost:3200/user/register', {
+                method: 'POST', // no need to set content-type: multipart/formdata header as it is set automatically by client
+                body: formData
             });
+            // we can also send json payload with profile_pic as base64 encoded string of read image file
+            // But sending as multi-part/form-data is more effcient because
+            /*
+            The industry standard for sending files (such as images) from a client to a server in an API call is to use FormData rather than embedding the file data as a base64 encoded string in a JSON payload
+               Why FormData is Preferred Over Base64 Encoded String ?
+
+                1. Efficiency: File Size: Base64 encoding increases the file size by approximately 33%, leading to larger payloads.
+                               Encoding Overhead: Encoding and decoding base64 strings add computational overhead on both the client and server sides.
+                2. Simplicity:  File Handling: FormData is specifically designed for handling files and binary data, making it straightforward to use for file uploads.
+                                Browser Support: FormData is natively supported by browsers, providing a clean and simple API for handling multipart form data.
+                3. Standardization: Content-Type: Using multipart/form-data is a standard way to send files in HTTP requests, and most servers and frameworks are optimized to handle this content type.
+
+            Referred from ChatGPT
+            */
             if (!response.ok) {
                 toast.error('Bad Response ' + JSON.stringify({ message: response.statusText, statusCode: response.status }), { position: 'top-left' });
                 throw new Error({ message: response.statusText, statusCode: response.status });
@@ -110,6 +130,7 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
         }
         setSignUpUsername('');
         setSignUpPassword('');
+        setSignUpEmail('');
 
     };
 
@@ -159,6 +180,25 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
             //throw error;
         }
     };
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        setSelectedFile(file);
+        setSelectedFileName(file.name);
+    
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result); // we can use this data in img tag src field ex:- src={preview}
+          // reader.result is base64 encoded string of the image which will be very large
+        };
+        if (file) {
+          reader.readAsDataURL(file);
+        }
+      };
+
+      const handleUploadImageDivClick = () => {
+        fileInputRef.current.click(); //when the user clicks the div we are simulating a click on the element referenced by the ref variable i.e input element
+      };
 
     return (
         <>
@@ -211,12 +251,40 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
                             <br />
                             <input
                                 type="mail"
-                                placeholder="Password (mail)"
+                                placeholder="Email"
+                                value={signUpEmail}
+                                onChange={(e) => setSignUpEmail(e.target.value)}
+                                style={{ marginBottom: '10px', padding: '10px', width: '18rem', height: '2rem', fontSize: '1.2rem' }}
+                            />
+                            <br />
+                            <input
+                                type="text"
+                                placeholder="New Password"
                                 value={signUpPassword}
                                 onChange={(e) => setSignUpPassword(e.target.value)}
                                 style={{ marginBottom: '10px', padding: '10px', width: '18rem', height: '2rem', fontSize: '1.2rem' }}
                             />
                             <br />
+                            <div onClick={handleUploadImageDivClick} style={{border: '1px dashed black', borderRadius: '0.5rem', paddingTop: '3rem', paddingBottom: '3rem', textAlign: 'center', backgroundColor: '#edfffdc4', marginBottom: '10px', cursor: 'pointer'}}>
+                                <span style={{color: 'blue'}}> Choose Pic  </span> or Drop here
+                            </div> 
+                            <div></div>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                ref={fileInputRef} //We are storing the reference of this hidden input element in state using ref
+                                onChange={handleFileChange}
+                            />
+                            {preview && (
+                                <div>
+                                {/* <h3>Preview:</h3>
+                                <img src={preview} alt="Preview" style={{ maxWidth: '100%', height: 'auto' }} />
+                                 */}
+                                 <p> <span style={{ color: 'green', size: '5px' }}>✓</span> {selectedFileName} </p>
+                                </div>
+                            )}
+                            
                             <button type="submit" style={{ padding: '12px 10px', background: 'lightblue', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '8rem',height: '3rem', fontSize: '1rem' }}>Sign Up</button>
                             <h4>Click here to <a href='#' style={{ textDecoration: 'none' }} onClick={() => { setIsSignIn(true); setIsSignUp(false) }}>Login</a></h4>
                         </form>
