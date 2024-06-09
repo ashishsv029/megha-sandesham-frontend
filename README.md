@@ -28,6 +28,9 @@ V1.0.0
 2. Chat UI
 ![ChatUI](https://github.com/ashishsv029/megha-sandesham-frontend/blob/master/public/UI-Images/meghasandesham-ui-2.png)
 
+3. Chatting UI With Profile Pics (AWS S3 Fetched)
+![ChattingUIWithProfilePics](https://github.com/ashishsv029/megha-sandesham-frontend/blob/master/public/UI-Images/meghasandesham-ui-3.png)
+
 # Todos:-
 
 1. Add create new group component and connect to existing backend APIs

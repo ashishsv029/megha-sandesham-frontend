@@ -6,7 +6,7 @@ let ChatHistoryComponent = ({loggedInUserInfo = {}, onRoomClick, associatedRooms
   return (
    
     <>
-      <UserProfileComponent userName={loggedInUserInfo.name}/>
+      <UserProfileComponent userName={loggedInUserInfo.name} userProfileImage={loggedInUserInfo.profile_pic}/>
       <ChatRoomsComponent userInfo={loggedInUserInfo} roomsInfo={associatedRooms} onRoomClick={onRoomClick}/>
       <NewChatComponent userInfo={loggedInUserInfo} addNewRoom={addNewRoom} roomsInfo={associatedRooms} onRoomClick={onRoomClick}/>
 

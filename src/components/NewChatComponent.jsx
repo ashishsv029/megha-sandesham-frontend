@@ -44,6 +44,7 @@ const NewChatComponent = ({ addNewRoom, userInfo, roomsInfo, onRoomClick}) => {
             const tempRoomPayload = {
                 id: responseData.id,
                 name: responseData.name,
+                profile_pic: responseData.profile_pic,
                 type: "dm",
                 admin: userInfo.id,
                 min_participants: 1,
@@ -51,7 +52,14 @@ const NewChatComponent = ({ addNewRoom, userInfo, roomsInfo, onRoomClick}) => {
                 is_private: true,
                 is_temp_room: true,
                 created_at: new Date().toISOString(),
-                modified_at: new Date().toISOString()
+                modified_at: new Date().toISOString(),
+                associatedUsers: [
+                    {
+                        name: responseData.name,
+                        email: responseData.email,
+                        profile_pic: responseData.profile_pic
+                    }
+                ]
             }
             addNewRoom(tempRoomPayload);
 

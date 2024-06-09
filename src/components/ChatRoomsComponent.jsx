@@ -28,7 +28,13 @@ const ChatRoomsComponent = ({ roomsInfo = [], onRoomClick, userInfo, initialRoom
                     }}
                     onClick={() => handleRoomClick(room, index)}
                 >
-                    <img src={room.photo ? room.photo : 'ntr.png'} alt="Item" style={{ width: '50px', height: '50px', borderRadius: '50%', marginRight: '10px' }} />
+                    <img src={
+                        room?.associatedUsers?.filter(user => {
+                            if(user.name == room.name) {
+                                return true
+                            }
+                        })[0].profile_pic
+                    } alt="Item" style={{ width: '50px', height: '50px', borderRadius: '50%', marginRight: '10px' }} />
                     <span style={{marginLeft: '1rem', fontSize: '1.2rem'}}>
                         
                     {room.name}

@@ -1,5 +1,5 @@
 import { IoMdSettings } from "react-icons/io";
-const UserProfileComponent = ({ userProfileImage = 'ashu.jpeg', userName }) => {
+const UserProfileComponent = ({ userProfileImage, userName }) => {
   const profileBarStyle = {
     display: 'flex',
     flexDirection: 'row',

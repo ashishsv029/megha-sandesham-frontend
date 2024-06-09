@@ -10,7 +10,9 @@ let ChatComponent = ({isUserSelectedAnyRoom, roomInfo, userSocket, selectedRoomM
             {
                 isUserSelectedAnyRoom ? 
                 <> 
-                    <RoomProfileComponent RoomName={roomInfo.name}/>
+                    <RoomProfileComponent RoomName={roomInfo.name} RoomProfileImage={
+                        roomInfo?.associatedUsers?.filter(user => {if(user.name == roomInfo.name) {return user.profile_pic}})[0].profile_pic // can be optimized in backend
+                        }/>
                     <RoomMessagesComponent roomMessages={selectedRoomMessages} />
                     <SendMessageComponent userSocket={userSocket} roomInfo={roomInfo}/>
                 </> :

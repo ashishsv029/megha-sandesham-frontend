@@ -11,7 +11,7 @@
 import { IoMdSettings } from "react-icons/io";
 import { FaSearch } from "react-icons/fa";
 import { FaPowerOff } from "react-icons/fa6";
-const RoomProfileComponent = ({ RoomProfileImage = 'ntr.png', RoomName = 'NTR Jr' }) => {
+const RoomProfileComponent = ({ RoomProfileImage, RoomName }) => {
     const profileBarStyle = {
         display: 'flex',
         flexDirection: 'row',
