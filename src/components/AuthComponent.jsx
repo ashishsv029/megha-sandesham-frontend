@@ -222,7 +222,7 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
                             <br />
                             <input
                                 type="password"
-                                placeholder="Password (mailId)"
+                                placeholder="Password"
                                 value={signInPassword}
                                 onChange={(e) => setSignInPassword(e.target.value)}
                                 style={{ marginBottom: '10px', padding: '10px', width: '18rem', height: '2rem', fontSize: '1.2rem' }}
