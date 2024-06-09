@@ -22,13 +22,16 @@ V1.0.0
 
 # UI Images
 
-1. Authentication UI
+1. Authentication UI - Sign In
 ![AuthenticationUI](https://github.com/ashishsv029/megha-sandesham-frontend/blob/master/public/UI-Images/meghasandesham-ui-1.png)
 
-2. Chat UI
+2. Registration UI - Sign Up
+![RegistrationUI](https://github.com/ashishsv029/megha-sandesham-frontend/blob/master/public/UI-Images/meghasandesham-ui-4.png)
+
+3. Chat UI
 ![ChatUI](https://github.com/ashishsv029/megha-sandesham-frontend/blob/master/public/UI-Images/meghasandesham-ui-2.png)
 
-3. Chatting UI With Profile Pics (AWS S3 Fetched)
+4. Chatting UI With Profile Pics (AWS S3 Fetched)
 ![ChattingUIWithProfilePics](https://github.com/ashishsv029/megha-sandesham-frontend/blob/master/public/UI-Images/meghasandesham-ui-3.png)
 
 # Todos:-
