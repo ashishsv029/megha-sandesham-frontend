@@ -29,7 +29,7 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
         const validateUser = async () => {
             try {
                 console.log("Checking Cookie Validity...");
-                const response = await fetch('http://localhost:3200/user/validate', {
+                const response = await fetch('http://authentication-service:3200/user/validate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
             formData.append('email', signUpEmail);
             formData.append('password', signUpPassword);
             formData.append('profile_pic', selectedFile);
-            const response = await fetch('http://localhost:3200/user/register', {
+            const response = await fetch('http://authentication-service:3200/user/register', {
                 method: 'POST', // no need to set content-type: multipart/formdata header as it is set automatically by client
                 body: formData
             });
@@ -140,7 +140,7 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
         let responseData = {};
         //fetch the user details from backend server. TODO:- later Replace this with validation API which validates the creds and returns a JWT
         try {
-            const response = await fetch('http://localhost:3200/user/login', {
+            const response = await fetch('http://authentication-service:3200/user/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
