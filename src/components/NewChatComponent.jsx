@@ -29,7 +29,8 @@ const NewChatComponent = ({ addNewRoom, userInfo, roomsInfo, onRoomClick}) => {
                 onRoomClick(isUserAlreadyInRoomsList);
                 return;
             }
-            const response = await fetch(`http://app:3100/user/${receiverName}`);
+            // local url http://app:3100/user/${receiverName}
+            const response = await fetch(`/user/${receiverName}`);
             if (!response.ok) {
                 toast.error('Bad Response ' + JSON.stringify({ message: response.statusText, statusCode: response.status }), { position: 'top-left' });
                 return;

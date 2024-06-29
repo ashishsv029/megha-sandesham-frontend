@@ -32,7 +32,8 @@ function App() {
     setSelectedRoomInfo(roomInfo);
     // make api call to fetch room messages and set state
     try {
-      const response = await fetch(`http://app:3100/room/${roomInfo.id}/messages`, {
+      // local:- http://app:3100/room/${roomInfo.id}/messages
+      const response = await fetch(`/room/${roomInfo.id}/messages`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

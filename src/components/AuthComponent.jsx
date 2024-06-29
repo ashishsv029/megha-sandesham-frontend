@@ -29,7 +29,8 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
         const validateUser = async () => {
             try {
                 console.log("Checking Cookie Validity...");
-                const response = await fetch('http://authentication-service:3200/user/validate', {
+                //replace with http://authentication-service:3200/user/validate when running locally otherwise ensure we have below mappings in /etc/hosts file
+                const response = await fetch('/user/validate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -37,7 +38,7 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
                     body: JSON.stringify({
                         jwt: "",
                     }),
-                    credentials: 'include', // Include httpOnly cookies in the request
+                   credentials: 'include', // Include httpOnly cookies in the request
                 });
     
                 if (!response.ok) {
@@ -50,6 +51,7 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
                 const headers = {
                     'Authorization': validationClaims.jwt
                 }
+                console.log("Connecting on auth component load... headers=", headers);
                 const socket = CustomSocket(headers).connect();
                 await listenSocketEvents(socket);
                 //navigate('/chat'); // can be used from component only within react router.. so could not use this in app.js
@@ -100,7 +102,7 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
             formData.append('email', signUpEmail);
             formData.append('password', signUpPassword);
             formData.append('profile_pic', selectedFile);
-            const response = await fetch('http://authentication-service:3200/user/register', {
+            const response = await fetch('/user/register', {
                 method: 'POST', // no need to set content-type: multipart/formdata header as it is set automatically by client
                 body: formData
             });
@@ -140,8 +142,10 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
         let responseData = {};
         //fetch the user details from backend server. TODO:- later Replace this with validation API which validates the creds and returns a JWT
         try {
-            const response = await fetch('http://authentication-service:3200/user/login', {
+            //process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+            const response = await fetch('/user/login', {
                 method: 'POST',
+               
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -149,7 +153,9 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
                     email: signInUsername,
                     password: signInPassword,
                 }),
-                credentials: 'include' //needed to make browser set any response headers having set-cookie header 
+                //agent: new https.Agent({ rejectUnauthorized: false }),
+                //credentials: 'include' //needed to make browser set any response headers having set-cookie header 
+                
             });
             if (!response.ok) {
                 toast.error('Bad Response ' + JSON.stringify({ message: response.statusText, statusCode: response.status }), { position: 'top-left' });
@@ -165,6 +171,7 @@ const AuthComponent = ({ modifyLoggedInStatus, setUserInfoOnAppContext, addNewRo
             //         name: responseData.name
             //     })
             // } -> server gateway will create this header when jwt is sent
+            //Client side cookie setting:-  document.cookie = `authToken=${responseData.jwt}; Max-Age=86400; SameSite=None; Secure`;
             const headers = {
                 'Authorization': responseData.jwt
             }
